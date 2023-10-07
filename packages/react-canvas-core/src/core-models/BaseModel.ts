@@ -28,6 +28,7 @@ export interface BaseModelGenerics extends BaseEntityGenerics {
 
 export class BaseModel<G extends BaseModelGenerics = BaseModelGenerics> extends BaseEntity<G> {
 	protected parent: G['PARENT'];
+	protected moved: boolean;
 
 	constructor(options: G['OPTIONS']) {
 		super(options);
@@ -109,6 +110,22 @@ export class BaseModel<G extends BaseModelGenerics = BaseModelGenerics> extends 
 			);
 		}
 	}
+
+	getMoved() {
+		return this.moved;
+	}
+
+	setMoved(moved: boolean) {
+		this.moved = moved;
+	}
+
+	clicked() {
+			this.fireEvent(
+				{},
+				'clicked'
+			);
+	}
+
 
 	remove() {
 		this.fireEvent({}, 'entityRemoved');

@@ -28,8 +28,24 @@ export class MoveItemsState<E extends CanvasEngine = CanvasEngine> extends Abstr
 					if (!element.isSelected()) {
 						this.engine.getModel().clearSelection();
 					}
+					element.setMoved(false);
 					element.setSelected(true);
 					this.engine.repaintCanvas();
+				}
+			})
+		);
+
+		this.registerAction(
+			new Action({
+				type: InputType.MOUSE_UP,
+				fire: (event: ActionEvent<React.MouseEvent>) => {
+					const element = this.engine.getActionEventBus().getModelForEvent(event);
+					if (!element) {
+						return;
+					}
+					if (!element.getMoved()) {
+						element.clicked();
+					}
 				}
 			})
 		);
@@ -47,6 +63,9 @@ export class MoveItemsState<E extends CanvasEngine = CanvasEngine> extends Abstr
 			if (item instanceof BasePositionModel) {
 				if (item.isLocked()) {
 					continue;
+				}
+				if (Math.abs(event.virtualDisplacementX) > 2 || Math.abs(event.virtualDisplacementY) > 2) {
+					item.setMoved(true);
 				}
 				if (!this.initialPositions[item.getID()]) {
 					this.initialPositions[item.getID()] = {
